@@ -80,7 +80,9 @@ if [[ -x /usr/bin/tput ]]; then
   STATUS_C="\[\033[1;31m\]"
 fi
 
-[[ -x /usr/bin/lesspipe ]] && less_pipe_string="[[ -x /usr/bin/lesspipe ]] && eval \"\$(SHELL=/bin/sh lesspipe)\"\n\n"
+[[ -x /usr/bin/lesspipe ]] && less_pipe_string="
+[[ -x /usr/bin/lesspipe ]] && eval \"\$(SHELL=/bin/sh lesspipe)\"
+"
 
 tee "${HOME}/.bashrc" <<EOF
 #!/bin/bash
