@@ -4,6 +4,9 @@ working_dir=$(dirname "$0")
 
 cd "${working_dir}" || exit
 
+release="$(lsb_release -si 2>/dev/null)"
+
+[[ ! ${release} = Ubuntu ]]  && printf 'System release is %s please use another script\n' "${release}" && exit 2
 
 [[ -d /Users ]] && sys_label='macosx'
 if [[ -f "$HOME"/.bashrc ]]; then
@@ -67,26 +70,30 @@ case "$color" in
   fi
   ;;
 esac
-printf '%s\n' "#!/bin/bash\n# automaticaly generated while install" >>"$HOME"/.bashrc
-[[ "$(lsb_release -si 2>/dev/null)" == Ubuntu || "$(lsb_release -si 2>/dev/null)" == LinuxMint ]] &&
-  printf '%s\n' \
-    'pin () {' \
-    '    [[ -z "$*" ]] && return 1' \
-    '    local -a packages' \
-    '    local item' \
-    '    for item in "$@"; do' \
-    "    if dpkg -s \"\$item\" 2>/dev/null | grep -qE 'Status.*installed';then" \
-    "        printf '%b\\n' \"  \\e[32m\$item\\e[0m installed\"" \
-    '    else' \
-    "        packages+=( \"\$item\" )" \
-    '    fi' \
-    '    done' \
-    "    [[ -n \"\${packages[*]}\" ]] && \\" \
-    "    sudo apt-get update && \\" \
-    "    sudo apt-get -y install \"\${packages[@]}\"" \
-    '}' \
-    >>"$HOME"/.bashrc
 
+#add_pin() {
+#    printf '%s\n'
+#}
+
+printf '%s\n' "#!/bin/bash\n# automatically generated with install" > "$HOME"/.bashrc
+#[[ "$(lsb_release -si 2>/dev/null)" == Ubuntu || "$(lsb_release -si 2>/dev/null)" == LinuxMint ]] &&
+#  printf '%s\n' \
+#    'pin () {' \
+#    '    [[ -z "$*" ]] && return 1' \
+#    '    local -a packages' \
+#    '    local item' \
+#    '    for item in "$@"; do' \
+#    "    if dpkg -s \"\$item\" 2>/dev/null | grep -qE 'Status.*installed';then" \
+#    "        printf '%b\\n' \"  \\e[32m\$item\\e[0m installed\"" \
+#    '    else' \
+#    "        packages+=( \"\$item\" )" \
+#    '    fi' \
+#    '    done' \
+#    "    [[ -n \"\${packages[*]}\" ]] && \\" \
+#    "    sudo apt-get update && \\" \
+#    "    sudo apt-get -y install \"\${packages[@]}\"" \
+#    '}' \
+#    >>"$HOME"/.bashrc
 printf '%s\n' \
   'export UG' \
   "UG=\"\$(whoami):\$(id -gn)\"" \
