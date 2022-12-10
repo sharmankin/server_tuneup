@@ -75,6 +75,7 @@ if [[ -x /usr/bin/tput ]]; then
     USER_C=${RED}
     END_LINE='#'
   fi
+  prinf '%s\n', "${HOST_C}"
   WD_C="\[\033[1;33m\]"
   STATUS_C="\[\033[1;31m\]"
 fi
