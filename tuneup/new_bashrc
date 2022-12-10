@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+working_dir=$(dirname "$0")
+
+cd "${working_dir}" || exit
+
+
 [[ -d /Users ]] && sys_label='macosx'
 if [[ -f "$HOME"/.bashrc ]]; then
   to_archive+=("$HOME"/.bashrc)
@@ -24,7 +29,7 @@ else
   sample="==="
 fi
 
-printf 'Use %s\n as hostname?' "${HOSTNAME}"
+printf 'Use %s\n as hostname?\n' "${HOSTNAME}"
 read -r -p "Write overriden value or leave blank for default " new_hostname
 
 [[ -n ${new_hostname} ]] && HOSTNAME=$new_hostname
