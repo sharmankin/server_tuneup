@@ -112,14 +112,14 @@ shopt -s checkwinsize
 EOF
 
 tee "${HOME}/.bash_aliases" 2>&1>/dev/null <<EOF
-if [[ -x /usr/bin/dircolors ]]; then'
+if [[ -x /usr/bin/dircolors ]]; then
     test -r ~/.dircolors && eval "\$(dircolors -b ~/.dircolors)" || eval "\$(dircolors -b)"
     alias ls='ls --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 
-    alias l='ls -1F
+    alias l='ls -1F'
     alias ll='ls -lF'
     alias la='ls -lAF'
     alias clr='clear && tput cud \$LINES'
