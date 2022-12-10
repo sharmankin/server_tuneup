@@ -43,6 +43,11 @@ if [[ -f ${HOME}/.bash_aliases ]]; then
   cp "${HOME}"/.bash_aliases "${HOME}/bash_aliases_backup_${session_timestamp}"
 fi
 
+if [[  ! -d "${HOME}/.fzf" ]]; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf" >/dev/null 2>&1
+  "${HOME}/.fzf/install" --all >/dev/null 2>&1
+fi
+
 prompt() {
 
   if [[ -x /usr/bin/tput ]] && tput setaf 1 >& /dev/null; then
@@ -103,6 +108,8 @@ prompt() {
 
 prompt_value=$(prompt)
 
+
+
 tee "${HOME}/.bashrc" >/dev/null 2>&1 <<EOF
 #!/bin/bash
 # automatically generated with install
@@ -146,8 +153,3 @@ if [[ -x /usr/bin/dircolors ]]; then
     alias running_services='systemctl list-units  --type=service  --state=running'
 fi
 EOF
-
-if [[  ! -d "${HOME}/.fzf" ]]; then
-  git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf" >/dev/null 2>&1
-  "${HOME}/.fzf/install" --all >/dev/null 2>&1
-fi
