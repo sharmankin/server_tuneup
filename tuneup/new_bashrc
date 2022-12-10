@@ -70,8 +70,7 @@ if [[ -x /usr/bin/tput ]]; then
   RESET="\[\033[0m\]"
   HOST_C="${selected_color}"
   USER_C="\[\033[1;32m\]"
-
-  if  [[ $(whomi) = root ]]; then
+  if  [[ $(whoami) = root ]]; then
     HOST_C=${RED}
     USER_C=${RED}
     END_LINE='#'
