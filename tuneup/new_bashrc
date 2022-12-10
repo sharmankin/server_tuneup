@@ -100,14 +100,13 @@ prompt() {
    "${RESET}" "${USER_C}" "${END_LINE}" "${RESET}"
 }
 
+prompt_value=$(prompt)
+
 tee "${HOME}/.bashrc" >/dev/null 2>&1 <<EOF
 #!/bin/bash
 # automatically generated with install
 
-#PS1="[ \A ] [${STATUS_C} \$? ${RESET}] [ ${WD_C}\w${RESET} ]
-#[ ${USER_C}\u${RESET}@${HOST_C}${prompt_host_name}${RESET} ]${USER_C}${END_LINE}${RESET}: "
-
-PS1="$(prompt)"
+PS1="${prompt_value}"
 
 HISTCONTROL=ignoreboth
 shopt -s histappend
