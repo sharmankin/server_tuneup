@@ -110,7 +110,7 @@ printf '%s\n' \
   '    fi' \
   '    ENDL="$"' \
   "    [[ \$(whoami) == \"root\" ]] && HOST_C=\"\${RED}\" && USER_C=\"\${RED}\" && ENDL=\"#\"" \
-  "    printf \"%s\" \"\\n[ \\A ] [\${STATUS_C} \\\$? \${RESET}] [ \${WD_C}\\w\${RESET} ]\\n[ \${USER_C}\\u\${RESET}@\${HOST_C}\\H\${RESET} ]\${USER_C}\${ENDL}\${RESET}: \"" \
+  "    printf \"%s\" \"\\n[ \\A ] [\${STATUS_C} \\\$? \${RESET}] [ \${WD_C}\\w\${RESET} ]\\n[ \${USER_C}\\u\${RESET}@\${HOST_C}${sample}\${RESET} ]\${USER_C}\${ENDL}\${RESET}: \"" \
   '}' \
   "PS1=\"\$(color_prompt_fn)\"" \
   >>"$HOME"/.bashrc
