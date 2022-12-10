@@ -137,6 +137,7 @@ if [[ -x /usr/bin/dircolors ]]; then
 fi
 EOF
 
-git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf" >/dev/null 2>&1
-
-"${HOME}/.fzf/install" --all >/dev/null 2>&1
+if [[  ! -d "${HOME}/.fzf" ]]; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf" >/dev/null 2>&1
+  "${HOME}/.fzf/install" --all >/dev/null 2>&1
+fi
