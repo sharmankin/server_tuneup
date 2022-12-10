@@ -15,6 +15,11 @@ read -r -p "Write another or leave blank for ${HOSTNAME} " new_hostname
 
 [[ -n ${new_hostname} ]] && prompt_host_name=$new_hostname || prompt_host_name=${HOSTNAME}
 
+if [[ -f "${HOME}/.bashrc"  ]] && [[ -n $(sed -rn '/^# automatically generated with install/p' "${HOME}"/.bashrc ) ]]; then
+  echo 'file was modified'
+  exit 3
+fi
+
 if [[ -f ${HOME}/.bashrc ]]; then
   cp "${HOME}"/.bashrc "${HOME}/bashrc_backup_${session_timestamp}"
 fi
