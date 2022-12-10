@@ -32,7 +32,7 @@ fi
 printf 'Use %s\n as hostname?\n' "${HOSTNAME}"
 read -r -p "Write overriden value or leave blank for default " new_hostname
 
-[[ -n ${new_hostname} ]] && HOSTNAME=$new_hostname
+[[ -n ${new_hostname} ]] && sample=$new_hostname
 
 colors="$(printf '%b\n' '[ \e[33mSelect color for hostname\e[m ]' \
   " 1) \\e[32m$sample\\e[m" \
