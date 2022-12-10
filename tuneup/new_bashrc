@@ -118,6 +118,14 @@ shopt -s checkwinsize
 
 [[ -f ${HOME}/.bash_aliases ]] && source ${HOME}/.bash_aliases
 
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    source /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    source /etc/bash_completion
+  fi
+fi
+
 EOF
 
 tee "${HOME}/.bash_aliases" >/dev/null 2>&1 <<EOF
