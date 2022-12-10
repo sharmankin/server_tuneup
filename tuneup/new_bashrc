@@ -114,8 +114,6 @@ prompt() {
 
 prompt_value=$(prompt)
 
-
-
 tee "${HOME}/.bashrc" >/dev/null 2>&1 <<EOF
 #!/bin/bash
 # automatically generated with install
@@ -151,11 +149,12 @@ if [[ -x /usr/bin/dircolors ]]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
-
-    alias l='ls -1F'
-    alias ll='ls -lF'
-    alias la='ls -lAF'
-    alias clr='clear && tput cud \$LINES'
-    alias running_services='systemctl list-units  --type=service  --state=running'
 fi
+
+alias l='ls -1F'
+alias ll='ls -lF'
+alias la='ls -lAF'
+alias clr='clear && tput cud \$LINES'
+alias running_services='systemctl list-units  --type=service  --state=running'
+
 EOF
