@@ -74,7 +74,6 @@ if [[ -x /usr/bin/tput ]]; then
     USER_C=${RED}
     END_LINE='#'
   fi
-  printf '%s\n', "________${HOST_C}____________"
   WD_C="\[\033[1;33m\]"
   STATUS_C="\[\033[1;31m\]"
 fi
@@ -96,7 +95,7 @@ HISTSIZE=1000
 HISTFILESIZE=2000
 shopt -s checkwinsize
 
-${less_pipe_string}
+[[ -x /usr/bin/lesspipe ]] && eval \"\$(SHELL=/bin/sh lesspipe)\"
 
 EOF
 
