@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+
+[[ -d /Users ]] && sys_label='macosx'
+if [[ -f "$HOME"/.bashrc ]]; then
+  to_archive+=("$HOME"/.bashrc)
+  backup_files+=('\e[33m~/.bashrc\e[m')
+fi
+if [[ -f "$HOME"/.bash_aliases ]]; then
+  to_archive+=("$HOME"/.bash_aliases)
+  backup_files+=('\e[33m~/.bash_aliases\e[m')
+fi
+
+archive_file="$(date +"%Y%m%d-%H%M%S")-$(id -un).bash.tar.gz"
+
+if [[ -n "${to_archive[*]}" ]]; then
+  # shellcheck disable=SC2068
+  tar -czPpf "/tmp/$archive_file" ${to_archive[@]} && \
+  rm -rf ${to_archive[@]} || exit 1
+fi
+
+if [[ -n "$HOSTNAME" ]]; then
+  sample="$HOSTNAME"
+else
+  sample="==="
+fi
+
+printf 'Use %s\n as hostname?' "${HOSTNAME}"
+read -r -p "Write overriden value or leave blank for default " new_hostname
+
+[[ -n ${new_hostname} ]] && HOSTNAME=$new_hostname
+
+colors="$(printf '%b\n' '[ \e[33mSelect color for hostname\e[m ]' \
+  " 1) \\e[32m$sample\\e[m" \
+  " 2) \\e[33m$sample\\e[m" \
+  " 3) \\e[34m$sample\\e[m" \
+  " 4) \\e[35m$sample\\e[m" \
+  " 5) \\e[36m$sample\\e[m" \
+  " 6) \\e[1;32m$sample\\e[m" \
+  " 7) \\e[1;33m$sample\\e[m" \
+  " 8) \\e[1;34m$sample\\e[m" \
+  " 9) \\e[1;35m$sample\\e[m" \
+  " 0) \\e[1;36m$sample\\e[m" \
+  '### : ')"
+read -r -p "$colors" -n 1 color
+echo
+case "$color" in
+1) selected_color='\[\033[32m\]' ;;
+2) selected_color='\[\033[33m\]' ;;
+3) selected_color='\[\033[34m\]' ;;
+4) selected_color='\[\033[35m\]' ;;
+5) selected_color='\[\033[36m\]' ;;
+6) selected_color='\[\033[1;32m\]' ;;
+7) selected_color='\[\033[1;33m\]' ;;
+8) selected_color='\[\033[1;34m\]' ;;
+9) selected_color='\[\033[1;35m\]' ;;
+0) selected_color='\[\033[1;36m\]' ;;
+*)
+  if echo "$color" | grep -qE '^1?;?[[:digit:]]{2}$'; then
+    selected_color="\\[\\033[${color}m\\]"
+  else
+    selected_color='\[\033[1;34m\]'
+  fi
+  ;;
+esac
+printf '%s\n' "#!/bin/bash\n# automaticaly generated while install" >>"$HOME"/.bashrc
+[[ "$(lsb_release -si 2>/dev/null)" == Ubuntu || "$(lsb_release -si 2>/dev/null)" == LinuxMint ]] &&
+  printf '%s\n' \
+    'pin () {' \
+    '    [[ -z "$*" ]] && return 1' \
+    '    local -a packages' \
+    '    local item' \
+    '    for item in "$@"; do' \
+    "    if dpkg -s \"\$item\" 2>/dev/null | grep -qE 'Status.*installed';then" \
+    "        printf '%b\\n' \"  \\e[32m\$item\\e[0m installed\"" \
+    '    else' \
+    "        packages+=( \"\$item\" )" \
+    '    fi' \
+    '    done' \
+    "    [[ -n \"\${packages[*]}\" ]] && \\" \
+    "    sudo apt-get update && \\" \
+    "    sudo apt-get -y install \"\${packages[@]}\"" \
+    '}' \
+    >>"$HOME"/.bashrc
+
+printf '%s\n' \
+  'export UG' \
+  "UG=\"\$(whoami):\$(id -gn)\"" \
+  'color_prompt_fn () {' \
+  '    local ENDL' \
+  '    if [[ -x /usr/bin/tput ]]; then' \
+  '        local RED RESET HOST_C WD_C USER_C' \
+  '        RED="\[\033[1;31m\]"' \
+  '        RESET="\[\033[0m\]"' \
+  "        HOST_C=\"$selected_color\"" \
+  '        USER_C="\[\033[1;32m\]"' \
+  '        WD_C="\[\033[1;33m\]"' \
+  '        STATUS_C="\[\033[1;31m\]"' \
+  '    fi' \
+  '    ENDL="$"' \
+  "    [[ \$(whoami) == \"root\" ]] && HOST_C=\"\${RED}\" && USER_C=\"\${RED}\" && ENDL=\"#\"" \
+  "    printf \"%s\" \"\\n[ \\A ] [\${STATUS_C} \\\$? \${RESET}] [ \${WD_C}\\w\${RESET} ]\\n[ \${USER_C}\\u\${RESET}@\${HOST_C}\\H\${RESET} ]\${USER_C}\${ENDL}\${RESET}: \"" \
+  '}' \
+  "PS1=\"\$(color_prompt_fn)\"" \
+  >>"$HOME"/.bashrc
+
+printf '%s\n' \
+  'HISTCONTROL=ignoreboth' \
+  'shopt -s histappend' \
+  'HISTSIZE=1000' \
+  'HISTFILESIZE=2000' \
+  'shopt -s checkwinsize' \
+  >>"$HOME"/.bashrc
+
+[[ -x /usr/bin/lesspipe ]] && printf '%s\n' \
+  "[[ -x /usr/bin/lesspipe ]] && eval \"\$(SHELL=/bin/sh lesspipe)\"" \
+  >>"$HOME"/.bashrc
+
+if [[ -x /usr/bin/dircolors ]]; then
+  printf '%s\n' \
+    'if [[ -x /usr/bin/dircolors ]]; then' \
+    "    test -r ~/.dircolors && eval \"\$(dircolors -b ~/.dircolors)\" || eval \"\$(dircolors -b)\"" \
+    "    alias ls='ls --color=auto'" \
+    "    alias grep='grep --color=auto'" \
+    "    alias fgrep='fgrep --color=auto'" \
+    "    alias egrep='egrep --color=auto'" \
+    'fi' >"$HOME"/.bash_aliases
+elif [[ "$sys_label" = 'macosx' ]]; then
+  printf '%s\n' \
+    "alias ls='ls -G'" \
+    "alias grep='grep --color=auto'" \
+    "alias fgrep='fgrep --color=auto'" \
+    "alias egrep='egrep --color=auto'" >"$HOME"/.bash_aliases
+  printf '%s\n' \
+    "[[ -f ~/.bashrc ]] && source ~/.bashrc" |
+    sudo tee -a /private/etc/profile >/dev/null
+fi
+
+printf '%s\n' \
+  "alias l='ls -1F'" \
+  "alias ll='ls -lF'" \
+  "alias la='ls -lAF'" \
+  "alias clr='clear && tput cud \$LINES'" \
+  "alias running_services='systemctl list-units  --type=service  --state=running'" \
+  >>"$HOME"/.bash_aliases
+
+printf '%s\n' "[[ -f $HOME/.bash_aliases ]] && source $HOME/.bash_aliases" \
+  >>"$HOME"/.bashrc
+
+[[ -e "$HOME"/.fzf.bash ]] &&
+  printf '%s\n' "[[ -f $HOME/.fzf.bash ]] && source $HOME/.fzf.bash" \
+    >>"$HOME"/.bashrc
+
+echo >>"$HOME"/.bash_aliases
+echo >>"$HOME"/.bashrc
+
+if [[ "${#backup_files[@]}" -gt 1 ]]; then
+  spec_string='Files'
+elif [[ "${#backup_files[@]}" -eq 1 ]]; then
+  spec_string='file'
+fi
+[[ "$spec_string" ]] && printf '%b\n' "$spec_string ${backup_files[*]} was archived into /tmp/$archive_file"

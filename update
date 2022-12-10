@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo apt update 2>&1>/dev/null | grep -qE "^[[:digit:]]+.*?packages" && sudo apt upgrade -y
