@@ -47,12 +47,14 @@ fi
 if [[ -x /usr/bin/tput ]]; then
   RED="\[\033[1;31m\]"
   RESET="\[\033[0m\]"
+  WD_C="\[\033[1;33m\]"
+  STATUS_C="\[\033[1;31m\]"
+  END_LINE='&'
+
   if [[ $(whoami) = root ]]; then
     HOST_C=${RED}
     USER_C=${RED}
     END_LINE='#'
-    WD_C="\[\033[1;33m\]"
-    STATUS_C="\[\033[1;31m\]"
   else
     colors="$(printf '%b\n' '[ \e[33mSelect color for prompt\e[m ]' \
       " 1) \\e[32m$prompt_host_name\\e[m" \
