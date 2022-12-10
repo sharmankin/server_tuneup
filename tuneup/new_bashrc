@@ -92,7 +92,7 @@ if [[ -x /usr/bin/tput ]]; then
   fi
 fi
 
-tee "${HOME}/.bashrc" 2>&1>/dev/null <<EOF
+tee "${HOME}/.bashrc" > /dev/null 2>&1 <<EOF
 #!/bin/bash
 # automatically generated with install
 
@@ -111,7 +111,7 @@ shopt -s checkwinsize
 
 EOF
 
-tee "${HOME}/.bash_aliases" 2>&1>/dev/null <<EOF
+tee "${HOME}/.bash_aliases" > /dev/null 2>&1 <<EOF
 if [[ -x /usr/bin/dircolors ]]; then
     test -r ~/.dircolors && eval "\$(dircolors -b ~/.dircolors)" || eval "\$(dircolors -b)"
     alias ls='ls --color=auto'
@@ -127,29 +127,6 @@ if [[ -x /usr/bin/dircolors ]]; then
 fi
 EOF
 
+git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf" > /dev/null 2>&1
 
-
-#printf '%s\n' \
-#  "alias l='ls -1F'" \
-#  "alias ll='ls -lF'" \
-#  "alias la='ls -lAF'" \
-#  "alias clr='clear && tput cud \$LINES'" \
-#  "alias running_services='systemctl list-units  --type=service  --state=running'" \
-#  >>"$HOME"/.bash_aliases
-#
-#printf '%s\n' "[[ -f $HOME/.bash_aliases ]] && source $HOME/.bash_aliases" \
-#  >>"$HOME"/.bashrc
-#
-#[[ -e "$HOME"/.fzf.bash ]] &&
-#  printf '%s\n' "[[ -f $HOME/.fzf.bash ]] && source $HOME/.fzf.bash" \
-#    >>"$HOME"/.bashrc
-#
-#echo >>"$HOME"/.bash_aliases
-#echo >>"$HOME"/.bashrc
-#
-#if [[ "${#backup_files[@]}" -gt 1 ]]; then
-#  spec_string='Files'
-#elif [[ "${#backup_files[@]}" -eq 1 ]]; then
-#  spec_string='file'
-#fi
-#[[ "$spec_string" ]] && printf '%b\n' "$spec_string ${backup_files[*]} was archived into /tmp/$archive_file"
+"${HOME}/.fzf/install" --all > /dev/null 2>&1
