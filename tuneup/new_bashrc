@@ -44,7 +44,8 @@ if [[ -f ${HOME}/.bash_aliases ]]; then
 fi
 
 prompt() {
-  if [[ -x /usr/bin/tput ]]; then
+
+  if [[ -x /usr/bin/tput ]] && tput setaf 1 >& /dev/null; then
     local RED RESET WD_C STATUS_C END_LINE HOST_C USER_C colors selected_color color
     RED="\[\033[1;31m\]"
     RESET="\[\033[0m\]"
