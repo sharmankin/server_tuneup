@@ -20,6 +20,22 @@ if [[ -f "${HOME}/.bashrc"  ]] && [[ -n $(sed -rn '/^# automatically generated w
   exit 3
 fi
 
+
+if [[ ! -f "${HOME}/.profile" ]]; then
+
+  tee "${HOME}/.profile" <<EOF
+# ~/.profile: executed by Bourne-compatible login shells.
+
+if [ "\$BASH" ]; then
+  if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+  fi
+fi
+
+mesg n 2> /dev/null || true
+EOF
+fi
+
 if [[ -f ${HOME}/.bashrc ]]; then
   cp "${HOME}"/.bashrc "${HOME}/bashrc_backup_${session_timestamp}"
 fi
@@ -76,7 +92,7 @@ if [[ -x /usr/bin/tput ]]; then
   fi
 fi
 
-tee "${HOME}/.bashrc" <<EOF
+tee "${HOME}/.bashrc" 2>&1>/dev/null <<EOF
 #!/bin/bash
 # automatically generated with install
 
@@ -91,62 +107,28 @@ shopt -s checkwinsize
 
 [[ -x /usr/bin/lesspipe ]] && eval "\$(SHELL=/bin/sh lesspipe)"
 
+[[ -f ${HOME}/.bash_aliases ]] && source ${HOME}/.bash_aliases
+
 EOF
 
-#
-#printf '%s\n' \
-#  'export UG' \
-#  "UG=\"\$(whoami):\$(id -gn)\"" \
-#  'color_prompt_fn () {' \
-#  '    local ENDL' \
-#  '    if [[ -x /usr/bin/tput ]]; then' \
-#  '        local RED RESET HOST_C WD_C USER_C' \
-#  '        RED="\[\033[1;31m\]"' \
-#  '        RESET="\[\033[0m\]"' \
-#  "        HOST_C=\"${selected_color}\"" \
-#  '        USER_C="\[\033[1;32m\]"' \
-#  '        WD_C="\[\033[1;33m\]"' \
-#  '        STATUS_C="\[\033[1;31m\]"' \
-#  '    fi' \
-#  '    ENDL="$"' \
-#  "    [[ \$(whoami) == \"root\" ]] && HOST_C=\"\${RED}\" && USER_C=\"\${RED}\" && ENDL=\"#\"" \
-#  "    printf \"%s\" \"\\n[ \\A ] [\${STATUS_C} \\\$? \${RESET}] [ \${WD_C}\\w\${RESET} ]\\n[ \${USER_C}\\u\${RESET}@\${HOST_C}${prompt_host_name}\${RESET} ]\${USER_C}\${ENDL}\${RESET}: \"" \
-#  '}' \
-#  "PS1=\"\$(color_prompt_fn)\"" \
-#  >>"$HOME"/.bashrc
-#
-#printf '%s\n' \
-#  'HISTCONTROL=ignoreboth' \
-#  'shopt -s histappend' \
-#  'HISTSIZE=1000' \
-#  'HISTFILESIZE=2000' \
-#  'shopt -s checkwinsize' \
-#  >>"$HOME"/.bashrc
-#
-#[[ -x /usr/bin/lesspipe ]] && printf '%s\n' \
-#  "[[ -x /usr/bin/lesspipe ]] && eval \"\$(SHELL=/bin/sh lesspipe)\"" \
-#  >>"$HOME"/.bashrc
-#
-#if [[ -x /usr/bin/dircolors ]]; then
-#  printf '%s\n' \
-#    'if [[ -x /usr/bin/dircolors ]]; then' \
-#    "    test -r ~/.dircolors && eval \"\$(dircolors -b ~/.dircolors)\" || eval \"\$(dircolors -b)\"" \
-#    "    alias ls='ls --color=auto'" \
-#    "    alias grep='grep --color=auto'" \
-#    "    alias fgrep='fgrep --color=auto'" \
-#    "    alias egrep='egrep --color=auto'" \
-#    'fi' >"$HOME"/.bash_aliases
-#elif [[ "$sys_label" = 'macosx' ]]; then
-#  printf '%s\n' \
-#    "alias ls='ls -G'" \
-#    "alias grep='grep --color=auto'" \
-#    "alias fgrep='fgrep --color=auto'" \
-#    "alias egrep='egrep --color=auto'" >"$HOME"/.bash_aliases
-#  printf '%s\n' \
-#    "[[ -f ~/.bashrc ]] && source ~/.bashrc" |
-#    sudo tee -a /private/etc/profile >/dev/null
-#fi
-#
+tee "${HOME}/.bash_aliases" 2>&1>/dev/null <<EOF
+if [[ -x /usr/bin/dircolors ]]; then'
+    test -r ~/.dircolors && eval "\$(dircolors -b ~/.dircolors)" || eval "\$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
+    alias l='ls -1F
+    alias ll='ls -lF'
+    alias la='ls -lAF'
+    alias clr='clear && tput cud \$LINES'
+    alias running_services='systemctl list-units  --type=service  --state=running'
+fi
+EOF
+
+
+
 #printf '%s\n' \
 #  "alias l='ls -1F'" \
 #  "alias ll='ls -lF'" \
