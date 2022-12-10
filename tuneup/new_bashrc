@@ -64,8 +64,7 @@ if [[ -f ${HOME}/.bash_aliases ]]; then
 fi
 
 
-
-if [[ -x /usr/bin/tput ]]; then
+if [[ ! -x /usr/bin/tput ]]; then
   RED="\[\033[1;31m\]"
   RESET="\[\033[0m\]"
   HOST_C="${selected_color}"
