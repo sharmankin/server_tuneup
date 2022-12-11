@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")" && source ../activate || exit 20
+
+if [[ $(check_root) = 'sudo' ]]; then
+  alias snap='sudo snap'
+  alias certbot='sudo certbot'
+  alias ln='sudo ln'
+fi
+
+install snapd
+
+snap list | grep -Eq '\bcertbot\b' || {
+  snap install certbot --classic
+  ln -sf /snap/bin/certbot /usr/local/bin/
+
+  service_name="certbot_auto_renew"
+
+  tee /etc/systemd/system/${service_name}.service <<EOF
+[Unit]
+Description=Certbot
+Documentation=file:///usr/share/doc/python-certbot-doc/html/index.html
+Documentation=https://letsencrypt.readthedocs.io/en/latest/
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/certbot -q renew
+#ExecStopPost=/bin/systemctl reload postfix dovecot nginx
+PrivateTmp=true
+EOF
+
+tee /etc/systemd/system/${service_name}.timer <<EOF
+[Unit]
+Description=Run certbot twice daily
+
+[Timer]
+OnCalendar=*-*-* 00,12:00:00
+RandomizedDelaySec=43200
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now ${service_name}.timer
+
+}
