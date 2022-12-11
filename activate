@@ -11,6 +11,13 @@ check_root() {
   fi
 }
 
+cmd_prefix=$(check_root)
+
+if [[ $cmd_prefix = 'sudo' ]]; then
+  alias apt='sudo apt'
+  alias dpkg-query='sudo dpkg-query'
+fi
+
 install() {
   local apps_to_install app prefix
 
@@ -18,11 +25,11 @@ install() {
 
   # shellcheck disable=SC2068
   for app in ${@}; do
-    [[ -z $($prefix dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
+    [[ -z $(dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
   done
   
   # shellcheck disable=SC2068
-  [[ -n "${apps_to_install[*]}" ]] && $prefix apt install ${apps_to_install[@]} -y --no-install-recommends
+  [[ -n "${apps_to_install[*]}" ]] && apt install ${apps_to_install[@]} -y --no-install-recommends
 
 }
 

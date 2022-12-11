@@ -6,6 +6,11 @@ source ../activate
 
 cmd_prefix=$(check_root)
 
+if [[ $cmd_prefix = 'sudo' ]]; then
+  alias tee='sudo tee'
+  alias gpg='sudo gpg'
+fi
+
 [[ -n "$1" ]] && version="$1" || version=15
 
 [[ -z ${version} ]] && exit 2
@@ -15,8 +20,8 @@ keypath="/usr/share/keyrings/pgdg-${version}.gpg"
 release=$(lsb_release -cs)
 
 if [[ ! -f ${keypath} ]]; then
-  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | "${cmd_prefix}" gpg --dearmor -o "${keypath}"
-  "${cmd_prefix}" tee /etc/apt/sources.list.d/pgdg-"${version}".list <<EOF
+  curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o "${keypath}"
+  tee /etc/apt/sources.list.d/pgdg-"${version}".list <<EOF
 deb [signed-by=${keypath} arch=amd64] http://apt.postgresql.org/pub/repos/apt ${release}-pgdg main
 EOF
 fi
