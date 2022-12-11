@@ -16,8 +16,8 @@ install() {
 
   prefix=$(check_root)
 
-
-  for app in "$@"; do
+  # shellcheck disable=SC2068
+  for app in ${@}; do
     [[ -z $($prefix dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
   done
   
