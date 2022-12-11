@@ -100,6 +100,7 @@ prompt() {
       esac
       HOST_C="${selected_color}"
       USER_C="\[\033[1;32m\]"
+      END_LINE='&'
     fi
   fi
 
