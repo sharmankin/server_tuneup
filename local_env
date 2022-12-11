@@ -43,6 +43,13 @@ can_be_installed() {
     esac
 }
 
+can_be_installed_in_snap () {
+    local package
+    package="$1"
+    snap list | grep -Eq "\b${package}\b" && return 1 || return 0
+}
+
+
 install() {
   local apps_to_install
 
@@ -74,7 +81,8 @@ EOF
 
 check_file_protection() {
   echo
-  local reply
+  local reply config_file
+
     config_file=$(readlink -f "${1}")
    if [[ -f "${config_file}" ]] && grep -Eq '^#\s*?protected\s*$' "${1}"; then
     printf 'Marker "# protected" in file %s.\n' "${config_file}"

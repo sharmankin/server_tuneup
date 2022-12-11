@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")" && source ../local_env || exit 20
 
-./nginx check
+can_be_installed nginx && ./nginx
 
 keypath="/usr/share/keyrings/webmin.gpg"
 
@@ -70,7 +70,7 @@ EOF
   systemctl reload nginx
 }
 
-./certbot
+can_be_installed_in_snap certbot && ./certbot
 
 [[ -f /etc/letsencrypt/live/"${webmin_host}" ]] || {
   certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \

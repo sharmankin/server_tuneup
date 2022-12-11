@@ -10,7 +10,7 @@ fi
 
 install snapd
 
-snap list | grep -Eq '\bcertbot\b' || {
+can_be_installed_in_snap certbot || {
   snap install certbot --classic
   ln -sf /snap/bin/certbot /usr/local/bin/
 
