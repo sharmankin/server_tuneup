@@ -23,7 +23,7 @@ if [[ $cmd_prefix = 'sudo' ]]; then
   alias systemctl='sudo systemctl'
   alias tee='sudo tee'
   alias mkdir='sudo mkdir'
-
+  alias cp='sudo cp'
   sudo -b printf '%s' ''
 elif [[ $cmd_prefix = 'restrict' ]]; then
   exit 4

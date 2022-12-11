@@ -7,10 +7,11 @@ release=$(lsb_release -cs)
 source_file="/etc/apt/sources.list"
 session_timestamp="$(date +"%Y%m%d-%H%M%S")"
 
+[[ -f "${source_file}" ]] && {
+  cp "${source_file}" "${source_file}_${session_timestamp}.backup"
+}
 
-[[ -f "${source_file}" ]] && cp "${source_file}" "${source_file}_${session_timestamp}.backup"
-
-tee "${source_file}" > /dev/null 2>&1 <<EOF
+tee "${source_file}" >/dev/null 2>&1 <<EOF
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} main restricted
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-updates main restricted
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} universe
