@@ -29,6 +29,5 @@ install() {
 update() {
   local prefix
   prefix=$(check_root)
-    prefix apt update 2>&1>/dev/null | grep -qE "^[[:digit:]]+.*?packages" && prefix apt upgrade -y || \
-    return 0
+    prefix apt update 2>&1>/dev/null | grep -qE "^[[:digit:]]+.*?packages" && prefix apt upgrade -y
 }

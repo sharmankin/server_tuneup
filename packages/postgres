@@ -16,5 +16,4 @@ EOF
 fi
 
 update
-install postgresql-"${version}" postgresql-client-"${version}" \
-  libpq-dev postgresql-"${version}"-mysql-fdw
+install postgresql-"${version}" postgresql-client-"${version}" libpq-dev postgresql-"${version}"-mysql-fdw
