@@ -59,10 +59,12 @@ EOF
 }
 
 check_file_protection() {
+  local reply
     config_file="${1}"
-
    if [[ -f "${config_file}" ]] && grep -Eq '^#\s*?protected\s*$' "${1}"; then
-    printf 'Marker "# protected" in file %s.\nRemove marker and repeat\n' "${config_file}"
-    exit 42
+    printf 'Marker "# protected" in file %s.\n' "${config_file}"
+    read -r -p 'Overwrite protected config [y|N]? : ' -n 1 reply
+    [[ ${reply,,} = 'y' ]] && return 0
+    return 1
   fi
 }
