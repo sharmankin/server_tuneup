@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-working_dir=$(dirname "$0")
-
-cd "${working_dir}" || exit
-
 release="$(lsb_release -si 2>/dev/null)"
 
 [[ ! ${release} = Ubuntu ]] && printf 'System release is %s please use another script\n' "${release}" && exit 2
