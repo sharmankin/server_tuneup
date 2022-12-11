@@ -11,10 +11,10 @@ read -r -p "Write another or leave blank for ${HOSTNAME} " new_hostname
 
 [[ -n ${new_hostname} ]] && prompt_host_name=$new_hostname || prompt_host_name=${HOSTNAME}
 
-if [[ -f "${HOME}/.bashrc" ]] && [[ -n $(sed -rn '/^# automatically generated with install/p' "${HOME}"/.bashrc) ]]; then
-  echo 'file was modified'
-  exit 3
-fi
+#if [[ -f "${HOME}/.bashrc" ]] && [[ -n $(sed -rn '/^# automatically generated with install/p' "${HOME}"/.bashrc) ]]; then
+#  echo 'file was modified'
+#  exit 3
+#fi
 
 if [[ ! -f "${HOME}/.profile" ]]; then
 
@@ -68,7 +68,7 @@ prompt() {
       END_LINE='#'
       ps_start='\n'
     else
-      colors="$(printf '%s\n' '[ \e[33mSelect color for prompt\e[m ]' \
+      colors="$(printf '%b' '[ \e[33mSelect color for prompt\e[m ]' \
         " 1) \\e[32m$prompt_host_name\\e[m" \
         " 2) \\e[33m$prompt_host_name\\e[m" \
         " 3) \\e[34m$prompt_host_name\\e[m" \
