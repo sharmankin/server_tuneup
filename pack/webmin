@@ -80,4 +80,4 @@ systemctl reload nginx
 
 sed -ir '/^referers=.*$/d' /etc/webmin/config
 sed -ir 's/^ssl=1/ssl=0/' /etc/webmin/miniserv.conf
-echo "referers=${webmin_host}" >>/etc/webmin/config
+echo "referers=${webmin_host}" | tee -a /etc/webmin/config
