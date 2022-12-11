@@ -20,6 +20,10 @@ if [[ $cmd_prefix = 'sudo' ]]; then
   alias dpkg-query='sudo dpkg-query'
   alias add-apt-repository='sudo add-apt-repository'
   alias update-alternatives='sudo update-alternatives'
+  alias systemctl='sudo systemctl'
+  alias tee='sudo tee'
+  alias mkdir='sudo mkdir'
+
   sudo -b printf '%s' ''
 elif [[ $cmd_prefix = 'restrict' ]]; then
   exit 4
@@ -37,4 +41,26 @@ install() {
 
 update() {
     apt update 2>&1>/dev/null | grep -qE "^[[:digit:]]+.*?packages" && apt upgrade -y
+}
+
+fix_wait_online() {
+  systemctl --type=service | grep -q systemd-networkd-wait-online || return 0
+  [[ -d /etc/systemd/system/systemd-networkd-wait-online.service.d ]] || return 0
+
+  mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d
+
+  tee /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf << EOF
+[Service]
+ExecStart=
+ExecStart=/usr/lib/systemd/systemd-networkd-wait-online --any
+EOF
+  systemctl daemon-reload
+  systemctl restart systemd-networkd-wait-online.service
+}
+
+check_file_protection() {
+    grep -Eq '^#\s*?protected\s*$' "${1}" || {
+    printf 'Marker "# protected" in file %s.\nRemove marker and repeat\n' "${config_file}"
+    return 1
+  }
 }
