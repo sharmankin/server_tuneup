@@ -29,11 +29,29 @@ elif [[ $cmd_prefix = 'restrict' ]]; then
   exit 4
 fi
 
+can_be_installed() {
+    local package
+    package="$1"
+
+    case $(dpkg-query -W -f='${Status}' "${package}" | cut -d' ' -f3 ) in
+    'installed')
+      return 1
+      ;;
+    'not-installed')
+    return 0
+    ;;
+  *)
+    prinf "Package %s can't be find" "${package}"
+    return 1
+    ;;
+    esac
+}
+
 install() {
   local apps_to_install
 
   for app in "$@"; do
-    [[ -z $(dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
+    can_be_installed "${app}" && apps_to_install+=("$app")
   done
 
   [[ -n "${apps_to_install[*]}" ]] && apt install "${apps_to_install[@]}" -y --no-install-recommends
