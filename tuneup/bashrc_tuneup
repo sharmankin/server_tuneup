@@ -31,12 +31,17 @@ mesg n 2> /dev/null || true
 EOF
 fi
 
+backup_dir="${HOME}"/.config_backup
+
+
 if [[ -f ${HOME}/.bashrc ]]; then
-  cp "${HOME}"/.bashrc "${HOME}/bashrc_backup_${session_timestamp}"
+  mkdir -p "${backup_dir}"
+  cp "${HOME}"/.bashrc "${backup_dir}/bashrc_backup_${session_timestamp}"
 fi
 
 if [[ -f ${HOME}/.bash_aliases ]]; then
-  cp "${HOME}"/.bash_aliases "${HOME}/bash_aliases_backup_${session_timestamp}"
+  mkdir -p "${backup_dir}"
+  cp "${HOME}"/.bash_aliases "${backup_dir}/bash_aliases_backup_${session_timestamp}"
 fi
 
 if [[  ! -d "${HOME}/.fzf" ]]; then

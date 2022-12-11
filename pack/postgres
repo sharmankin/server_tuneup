@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
-shopt -s expand_aliases
 
-cd "$(dirname "$0")" || exit
+cd "$(dirname "$0")" && source ../activate || exit 20
 
-source ../activate
-
-cmd_prefix=$(check_root)
-
-if [[ $cmd_prefix = 'sudo' ]]; then
+if [[ $(check_root) = 'sudo' ]]; then
   alias tee='sudo tee'
   alias gpg='sudo gpg'
 fi

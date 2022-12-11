@@ -1,1 +1,135 @@
 #!/usr/bin/env bash
+
+
+cd "$(dirname "$0")" && source ../activate || exit 20
+
+vimrc="${HOME}/.vimrc"
+vim_conf_dir="${HOME}/.vim"
+
+backup_timestamp=$(date +"%Y%m%d-%H%M%S")
+
+[[ -d "${vim_conf_dir}" ]] && old_vim+=("${vim_conf_dir}")
+[[ -f "${vimrc}" ]] && old_vim+=("${vimrc}")
+
+backup_dir="${HOME}"/.config_backup
+mkdir -p "${backup_dir}"
+
+if [[ -n "${old_vim[*]}" ]]; then
+  tar -czPpf "${backup_dir}/${backup_timestamp}-$(id -un).vim.tar.gz" "${old_vim[@]}"
+  rm -fr "${old_vim[@]}"
+fi
+
+update
+
+install python3-dev curl vim-nox shellcheck build-essential cmake vim-python-jedi vim-lastplace
+
+curl -sfL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o "${vim_conf_dir}"/autoload/plug.vim --create-dirs
+
+tee "${vimrc}" &> /dev/null <<EOF
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set mouse=a
+set number
+set wrap
+set linebreak
+set hidden
+set showmatch
+set showcmd
+set autoread
+set confirm
+set noshowmode
+set t_Co=256
+if isdirectory(\$HOME . '/.vim/backup') == 0
+    :silent !mkdir -p ~/.vim/backup >/dev/null 2>&1
+endif
+set backupdir-=.
+set backupdir+=.
+set backupdir-=~/
+set backupdir^=~/.vim/backup/
+set backupdir^=./.vim-backup/
+set backup
+
+if isdirectory(\$HOME . '/.vim/swap') == 0
+    :silent !mkdir -p ~/.vim/swap >/dev/null 2>&1
+endif
+set directory=./.vim-swap//
+set directory+=~/.vim/swap//
+set directory+=~/tmp//
+set directory+=.
+
+if exists("+undofile")
+    if isdirectory(\$HOME . '/.vim/undo') == 0
+        :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
+    endif
+    set undodir=./.vim-undo//
+    set undodir+=~/.vim/undo//
+    set undofile
+endif
+filetype plugin indent on
+autocmd! bufwritepost \$MYVIMRC source \$MYVIMRC
+syntax on
+set browsedir=current
+set visualbell
+set undolevels=2048
+set smartindent
+set foldmethod=syntax
+set cul
+hi CursorLine term=none cterm=none ctermbg=235
+set infercase
+set encoding=utf-8
+set termencoding=utf-8
+set fileformat=unix
+set hlsearch
+set incsearch
+
+call plug#begin('~/.vim/plugged')
+    Plug 'Valloric/YouCompleteMe', { 'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py' }
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all 2>&1 > /dev/null' }
+    Plug 'neomake/neomake'
+    Plug 'dracula/vim', { 'as': 'dracula' }
+    Plug 'eiginn/netrw'
+    Plug 'tpope/vim-eunuch'
+call plug#end()
+
+"colorscheme dracula
+"call neomake#configure#automake('rw', 500)
+"let g:airline#extensions#tabline#formatter = 'unique_tail'
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
+"let g:netrw_altv = 1
+"let g:netrw_browse_split = 4
+"let g:netrw_liststyle = 3
+"let g:netrw_banner = 0
+
+nmap <F2> :SudoWrite<CR>
+vmap <F2> <Esc> :SudoWrite<CR>
+imap <F2> <Esc> :SudoWrite<CR>
+
+nmap <F3> :SudoEdit<CR>
+vmap <F3> <Esc> :SudoEdit<CR>
+imap <F3> <Esc> :SudoEdit<CR>
+
+nmap <F4> :Chmod -x<CR>
+vmap <F4> <Esc> :Chmod -x<CR>v
+imap <F4> <Esc> :Chmod -x<CR>i
+
+nmap <F4><F4> :Chmod +x<CR>
+vmap <F4><F4> <Esc> :Chmod +x<CR>v
+imap <F4><F4> <Esc> :Chmod +x<CR>i
+
+nmap <F9> :set mouse=a number<CR>
+vmap <F9> <Esc> :set mouse=a<CR>v
+imap <F9> <Esc> :set mouse=a<CR>i
+
+nmap <F9><F9> :set mouse= nonumber<CR>
+vmap <F9><F9> <Esc> :set mouse=<CR>v
+imap <F9><F9> <Esc> :set mouse=<CR>i
+EOF
+
+vim +PlugInstall +qall
+
+sed -ri '/neomake|airline|netrw|colorscheme/s/^"//' "${vimrc}"

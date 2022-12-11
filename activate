@@ -9,7 +9,7 @@ check_root() {
   elif groups | grep -Eq "\bsudo\b"; then
     printf '%b' 'sudo'
   else
-    prinf '%s' 'restrict'
+    prinf '%b' 'restrict'
   fi
 }
 
@@ -26,13 +26,12 @@ fi
 install() {
   local apps_to_install
 
-  # shellcheck disable=SC2068
-  for app in ${@}; do
+  for app in "$@"; do
     [[ -z $(dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
   done
   
-  # shellcheck disable=SC2068
-  [[ -n "${apps_to_install[*]}" ]] && apt install ${apps_to_install[@]} -y --no-install-recommends
+
+  [[ -n "${apps_to_install[*]}" ]] && apt install "${apps_to_install[@]}" -y --no-install-recommends
 
 }
 
