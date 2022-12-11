@@ -72,7 +72,7 @@ EOF
 
 can_be_installed_in_snap certbot && ./certbot
 
-[[ -f /etc/letsencrypt/live/"${webmin_host}" ]] || {
+[[ -d /etc/letsencrypt/live/"${webmin_host}" ]] || {
   certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \
     --email "${vhost_admin}" --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email
 }
