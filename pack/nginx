@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")" && source ../activate || exit 20
+
+if [[ $(check_root) = 'sudo' ]]; then
+  alias tee='sudo tee'
+  alias gpg='sudo gpg'
+  alias cp='sudo cp'
+  alias certbot='sudo certbot'
+  alias ln='sudo ln'
+fi
+
+fix_wait_online
+
+update
+install curl gnupg2 ca-certificates lsb-release ubuntu-keyring software-properties-common dirmngr apt-transport-https
+
+keypath="/usr/share/keyrings/nginx-archive-keyring.gpg"
+
+release=$(lsb_release -cs)
+
+if [[ ! -f ${keypath} ]]; then
+  curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o "${keypath}"
+  tee /etc/apt/sources.list.d/nginx.list <<EOF
+deb [signed-by=${keypath} arch=amd64] http://nginx.org/packages/mainline/ubuntu ${release} nginx
+EOF
+fi
+
+tee /etc/apt/preferences.d/99nginx <<EOF
+Package: *
+Pin: origin nginx.org
+Pin: release o=nginx
+Pin-Priority: 900
+
+EOF
+
+update
+install nginx fcgiwrap
+
+cp /usr/share/doc/fcgiwrap/examples/nginx.conf /etc/nginx/fcgiwrap.conf
+mkdir -p /etc/nginx/sites-{enabled,available}/
+mkdir -p /var/www/html
+
+config_file=/etc/nginx/nginx.conf
+
+check_file_protection "${config_file}" && {
+
+  tee /etc/nginx/nginx.conf <<EOF
+# protected
+user  www-data;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                      '\$status \$body_bytes_sent "\$http_referer" '
+                      '"\$http_user_agent" "\$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+EOF
+} || exit 42
+
+if [[ ! -f /var/www/html/index.html ]]; then
+
+  tee /var/www/html/index.html <<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Default Site Page</title>
+</head>
+<body>
+    <p style="color:red;">Welcome to $(hostname)</p>
+</body>
+</html>
+EOF
+fi
+
+[[ ! -f /etc/nginx/sites-available/default ]] &&
+  tee /etc/nginx/sites-available/default <<EOF
+server {
+
+    listen 80;
+    server_name $(hostname);
+    root /var/www/html;
+
+    index index.html;
+
+    location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files \$uri \$uri/ =404;
+        }
+}
+EOF
+
+ln -sf /etc/nginx/sites-{available,enabled}/default
+systemctl restart nginx
+
+./certbot
+
+[[ -f "/etc/letsencrypt/live/$(hostname)/fullchain.pem" ]] || {
+  certbot --nginx --agree-tos --hsts --staple-ocsp -d "$(hostname)" --email webmaster@"$(hostname)" \
+    --noninteractive --redirect --nginx-sleep-seconds 15 --no-eff-email
+}
