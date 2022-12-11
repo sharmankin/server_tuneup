@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+./nginx
+
 cd "$(dirname "$0")" && source ../local_env || exit 20
 
 keypath="/usr/share/keyrings/webmin.gpg"
@@ -10,6 +12,7 @@ if [[ $(check_root) = 'sudo' ]]; then
   alias cp='sudo cp'
   alias certbot='sudo certbot'
   alias ln='sudo ln'
+  alias sed='sudo sed'
 fi
 
 if [[ ! -f ${keypath} ]]; then
@@ -69,9 +72,10 @@ EOF
 
 ./certbot
 
-certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \
-  --email "${vhost_admin}" --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email
-
+[[ -f /etc/letsencrypt/live/"${webmin_host}" ]] || {
+  certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \
+    --email "${vhost_admin}" --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email
+}
 systemctl reload nginx
 
 sed -ir '/^referers=.*$/d' /etc/webmin/config
