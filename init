@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source ./env
+source ./local_env
 
 country=$(./extras/my_country)
 release=$(lsb_release -cs)

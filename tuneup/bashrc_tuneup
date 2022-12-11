@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")" && source ../env || exit 20
+cd "$(dirname "$0")" && source ../local_env || exit 20
 
 release="$(lsb_release -si 2>/dev/null)"
 
