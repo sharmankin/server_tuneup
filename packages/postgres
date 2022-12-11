@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ../activate
+
 [[ -n "$1" ]] && version="$1" || version=15
 
 [[ -z ${version} ]] && exit 2
