@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-root_dir="$(readlink -fn "$(dirname "$0")/../bin")"
-
-export PATH="${PATH}:${root_dir}"
-
 [[ -n "$1" ]] && version="$1" || version=15
 
 [[ -z ${version} ]] && exit 2
