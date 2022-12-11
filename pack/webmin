@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")" && source ../local_env || exit 20
 
-./nginx
+./nginx check
 
 keypath="/usr/share/keyrings/webmin.gpg"
 
