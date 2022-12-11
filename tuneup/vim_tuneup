@@ -29,9 +29,10 @@ YMC_INIT=$(printf "    Plug 'Valloric/YouCompleteMe', { 'dir': '%s', 'do': './in
 if groups | grep -Eq '\broot\b'; then
   fake_user=$(id -un 1000)
   fake_user_home="$(getent passwd "${fake_user}" | cut -d: -f6)"
+  fake_user_vim_YCM_dir="${fake_user_home}/.vim/plugged/YouCompleteMe"
+
   if [[ -d "${fake_user_vim_YCM_dir}" ]]; then
     YMC_INIT=$(printf "    Plug 'Valloric/YouCompleteMe', { 'dir': '%s' }" "${fake_user_home}/.vim/plugged/YouCompleteMe")
-
   else
     YMC_INIT=$(printf "\"    Plug 'Valloric/YouCompleteMe', { 'dir': '%s' }" "${vim_conf_dir}/plugged/YouCompleteMe")
   fi
