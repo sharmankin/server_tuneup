@@ -33,7 +33,7 @@ can_be_installed() {
     local package
     package="$1"
 
-    case $(dpkg-query -W -f='${Status}' "${package}" | cut -d' ' -f3 ) in
+    case $(dpkg-query -W -f='${Status}' "${package}" | cut -d' ' -f3 2>/dev/null ) in
     'installed')
       return 1
       ;;
