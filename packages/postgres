@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-working_dir=$(dirname "$0")
 
-cd "${working_dir}" || exit
+
+workdir=$(dirname "$0")
+
+export PATH="${PATH}:${workdir}"
+
+cd "${workdir}" || exit
 
 version="$1"
 
