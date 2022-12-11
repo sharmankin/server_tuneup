@@ -59,6 +59,7 @@ EOF
 }
 
 check_file_protection() {
+  echo
   local reply
     config_file=$(readlink -f "${1}")
    if [[ -f "${config_file}" ]] && grep -Eq '^#\s*?protected\s*$' "${1}"; then
