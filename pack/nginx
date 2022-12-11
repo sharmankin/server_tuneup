@@ -26,7 +26,7 @@ deb [signed-by=${keypath} arch=amd64] http://nginx.org/packages/mainline/ubuntu 
 EOF
 fi
 
-tee /etc/apt/preferences.d/99nginx <<EOF
+tee /etc/apt/preferences.d/99nginx >/dev/null 2>&1 <<EOF
 Package: *
 Pin: origin nginx.org
 Pin: release o=nginx
@@ -45,7 +45,7 @@ config_file=/etc/nginx/nginx.conf
 
 check_file_protection "${config_file}" && {
 
-  tee /etc/nginx/nginx.conf <<EOF
+tee /etc/nginx/nginx.conf >/dev/null 2>&1 <<EOF
 # protected
 user  www-data;
 worker_processes  auto;
@@ -84,7 +84,7 @@ EOF
 
 if [[ ! -f /var/www/html/index.html ]]; then
 
-  tee /var/www/html/index.html <<EOF
+  tee /var/www/html/index.html >/dev/null 2>&1 <<EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,7 +99,7 @@ EOF
 fi
 
 [[ ! -f /etc/nginx/sites-available/default ]] &&
-  tee /etc/nginx/sites-available/default <<EOF
+  tee /etc/nginx/sites-available/default >/dev/null 2>&1 <<EOF
 server {
 
     listen 80;
@@ -123,6 +123,6 @@ systemctl restart nginx
 
 [[ -f "/etc/letsencrypt/live/$(hostname)/fullchain.pem" ]] || {
   certbot --nginx --agree-tos --hsts --staple-ocsp -d "$(hostname)" --email webmaster@"$(hostname)" \
-    --noninteractive --redirect --nginx-sleep-seconds 15 --no-eff-email && \
+    --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email &&
     printf 'Check url https://%s must working properly' "$(hostname)"
 }
