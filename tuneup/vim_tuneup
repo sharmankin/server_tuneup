@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 cd "$(dirname "$0")" && source ../activate || exit 20
 
 vimrc="${HOME}/.vimrc"
@@ -25,9 +24,23 @@ install python3-dev curl vim-nox shellcheck build-essential cmake vim-python-jed
 
 update-alternatives --set editor /usr/bin/vim.nox
 
+YMC_INIT=$(printf "    Plug 'Valloric/YouCompleteMe', { 'dir': '%s', 'do': './install.py' }" "${vim_conf_dir}/plugged/YouCompleteMe")
+
+if groups | grep -Eq '\broot\b'; then
+  fake_user=$(id -un 1000)
+  fake_user_home="$(getent passwd "${fake_user}" | cut -d: -f6)"
+  if [[ -d "${fake_user_vim_YCM_dir}" ]]; then
+    YMC_INIT=$(printf "    Plug 'Valloric/YouCompleteMe', { 'dir': '%s' }" "${fake_user_home}/.vim/plugged/YouCompleteMe")
+
+  else
+    YMC_INIT=$(printf "\"    Plug 'Valloric/YouCompleteMe', { 'dir': '%s' }" "${vim_conf_dir}/plugged/YouCompleteMe")
+  fi
+
+fi
+
 curl -sfL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o "${vim_conf_dir}"/autoload/plug.vim --create-dirs
 
-tee "${vimrc}" &> /dev/null <<EOF
+tee "${vimrc}" &>/dev/null <<EOF
 set tabstop=4
 set shiftwidth=4
 set expandtab
@@ -86,7 +99,7 @@ set hlsearch
 set incsearch
 
 call plug#begin('~/.vim/plugged')
-    Plug 'Valloric/YouCompleteMe', { 'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py' }
+${YMC_INIT}
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all 2>&1 > /dev/null' }
