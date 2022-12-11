@@ -41,7 +41,7 @@ can_be_installed() {
     return 0
     ;;
   *)
-    prinf "Package %s can't be find" "${package}"
+    printf "Package %s can't be find" "${package}"
     return 1
     ;;
     esac
