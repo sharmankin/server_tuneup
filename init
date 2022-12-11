@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-install software-properties-common python3-{dev,pip,venv} htop lnav curl wget links ncdu vim-nox
+install software-properties-common python3-{dev,pip,venv} htop lnav curl wget links ncdu
