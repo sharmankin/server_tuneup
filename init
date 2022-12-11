@@ -1,9 +1,29 @@
 #!/usr/bin/env bash
 source ./activate
 
-install software-properties-common htop lnav curl wget links ncdu
+country=$(./extras/my_country)
+release=$(lsb_release -cs)
 
-add-apt-repository ppa:deadsnakes/ppa -y > /dev/null 2>&1
+source_file="/etc/apt/sources.list"
+session_timestamp="$(date +"%Y%m%d-%H%M%S")"
+
+
+[[ -f "${source_file}" ]] && cp "${source_file}" "${source_file}_${session_timestamp}.backup"
+
+tee "${source_file}" > /dev/null 2>&1 <<EOF
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} main restricted
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-updates main restricted
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} universe
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-updates universe
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} multiverse
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-updates multiverse
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-backports main restricted universe multiverse
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-security main restricted
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-security universe
+deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-security multiverse
+EOF
 
 update
-install python3-{dev,pip,venv}
+install software-properties-common htop lnav curl wget links ncdu python3-{dev,pip,venv}
+
+fix_wait_online
