@@ -11,7 +11,8 @@ session_timestamp="$(date +"%Y%m%d-%H%M%S")"
   cp "${source_file}" "${source_file}_${session_timestamp}.backup"
 }
 
-tee "${source_file}" >/dev/null 2>&1 <<EOF
+check_file_protection "${source_file}" &&  tee "${source_file}" >/dev/null 2>&1 <<EOF
+# protected
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} main restricted
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-updates main restricted
 deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release} universe
