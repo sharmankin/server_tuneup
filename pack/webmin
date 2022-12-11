@@ -76,8 +76,10 @@ can_be_installed_in_snap certbot && ./certbot
   certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \
     --email "${vhost_admin}" --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email
 }
-systemctl reload nginx
 
 sed -ir '/^referers=.*$/d' /etc/webmin/config
 sed -ir 's/^ssl=1/ssl=0/' /etc/webmin/miniserv.conf
 echo "referers=${webmin_host}" | tee -a /etc/webmin/config
+
+systemctl restart webmin
+systemctl reload nginx

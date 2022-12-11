@@ -30,5 +30,6 @@ EOF
 }
 update
 install software-properties-common htop lnav curl wget links ncdu python3-{dev,pip,venv} mc snapd
+install resolvconf
 
 fix_wait_online
