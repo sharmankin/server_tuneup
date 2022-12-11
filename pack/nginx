@@ -123,5 +123,6 @@ systemctl restart nginx
 
 [[ -f "/etc/letsencrypt/live/$(hostname)/fullchain.pem" ]] || {
   certbot --nginx --agree-tos --hsts --staple-ocsp -d "$(hostname)" --email webmaster@"$(hostname)" \
-    --noninteractive --redirect --nginx-sleep-seconds 15 --no-eff-email
+    --noninteractive --redirect --nginx-sleep-seconds 15 --no-eff-email && \
+    printf 'Check url https://%s must working properly' "$(hostname)"
 }
