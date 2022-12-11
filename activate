@@ -31,10 +31,8 @@ install() {
   for app in "$@"; do
     [[ -z $(dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
   done
-  echo "_ $* _"
 
   [[ -n "${apps_to_install[*]}" ]] && apt install "${apps_to_install[@]}" -y --no-install-recommends
-
 }
 
 update() {

@@ -23,6 +23,8 @@ update
 
 install python3-dev curl vim-nox shellcheck build-essential cmake vim-python-jedi vim-lastplace
 
+update-alternatives --set editor /usr/bin/vim.nox
+
 curl -sfL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o "${vim_conf_dir}"/autoload/plug.vim --create-dirs
 
 tee "${vimrc}" &> /dev/null <<EOF
