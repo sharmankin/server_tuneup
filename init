@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-source ./activate
+source ./env
 
 country=$(./extras/my_country)
 release=$(lsb_release -cs)
+
+[[ -z ${country} ]] && country='en'
 
 source_file="/etc/apt/sources.list"
 session_timestamp="$(date +"%Y%m%d-%H%M%S")"

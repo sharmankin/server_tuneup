@@ -5,4 +5,4 @@ from urllib import request
 import json
 
 req = json.loads(request.urlopen('https://api.myip.com/').read())
-print(req.get('cc', '').lower())
+print(req.get('cc', '').lower(), end='')
