@@ -66,7 +66,7 @@ prompt() {
       HOST_C=${RED}
       USER_C=${RED}
       END_LINE='#'
-      ps_start='\n'
+      printf '\n'
     else
       colors="$(printf '%b\n' '[ \e[33mSelect color for prompt\e[m ]' \
         " 1) \\e[32m$prompt_host_name\\e[m" \
@@ -81,7 +81,7 @@ prompt() {
         " 0) \\e[1;36m$prompt_host_name\\e[m" \
         '### : ')"
       read -r -p "$colors" -n 1 color
-#      echo
+      printf '\n'
       case "${color}" in
       1) selected_color='\[\033[32m\]' ;;
       2) selected_color='\[\033[33m\]' ;;
@@ -106,7 +106,6 @@ prompt() {
       END_LINE='&'
     fi
   fi
-  echo
   printf '[ \\A ] [%s \\$? %s] [ %s\\w%s ]\n[ %s\\u%s@%s%s%s ]%s%s%s: ' \
    "${STATUS_C}" "${RESET}" "${WD_C}" "${RESET}" "${USER_C}" "${RESET}" "${HOST_C}" "${prompt_alias}" \
    "${RESET}" "${USER_C}" "${END_LINE}" "${RESET}"
