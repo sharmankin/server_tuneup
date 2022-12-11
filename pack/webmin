@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")" && source ../local_env || exit 20
+
+keypath="/usr/share/keyrings/webmin.gpg"
+
+if [[ ! -f ${keypath} ]]; then
+  curl -fsSL "http://www.webmin.com/jcameron-key.asc" | gpg --dearmor -o "${keypath}"
+  tee /etc/apt/sources.list.d/webmin.list <<EOF
+deb [signed-by=${keypath} arch=amd64] http://download.webmin.com/download/repository sarge contrib
+EOF
+fi
+
+update
+install webmin
+
+read -r -p 'Take a name for subdomain ( default is "adm" ): ' subdomain
+
+[[ -z "${subdomain}" ]] && subdomain='adm'
+
+webmin_host=${subdomain}.$(hostname)
+vhost_admin=webmaster@$(hostname)
+
+config_file=$(printf '/etc/nginx/sites-%s/%s' 'available' "${webmin_host}")
+link_path=$(printf '/etc/nginx/sites-%s/%s' 'enabled' "${webmin_host}")
+
+check_file_protection "${config_file}" && {
+  tee "${config_file}" >/dev/null 2>&1 <<EOF
+# protected
+server {
+  server_name ${webmin_host};
+  listen 80;
+
+  location /RequestDenied {
+    return 418;
+  }
+
+  location / {
+    proxy_pass      http://127.0.0.1:10000;
+    proxy_redirect http:// https://;
+
+    #Proxy Settings
+    proxy_set_header   Host             \$host:\$server_port;
+    proxy_set_header   X-Real-IP        \$remote_addr;
+    proxy_set_header   X-Forwarded-For  \$proxy_add_x_forwarded_for;
+
+    proxy_max_temp_file_size 0;
+    proxy_connect_timeout      90;
+    proxy_send_timeout         90;
+    proxy_read_timeout         90;
+    proxy_buffer_size          128k;
+    proxy_buffers              32 32k;
+    proxy_busy_buffers_size    256k;
+    proxy_temp_file_write_size 256k;
+  }
+}
+EOF
+  ln -sf "${config_file}" "${link_path}"
+  systemctl reload nginx
+}
+
+./certbot
+
+certbot --nginx --agree-tos --hsts --staple-ocsp -d "${webmin_host}" \
+  --email "${vhost_admin}" --noninteractive --redirect --nginx-sleep-seconds 5 --no-eff-email
+
+systemctl reload nginx
+
+sed -ir '/^referers=.*$/d' /etc/webmin/config
+sed -ir 's/^ssl=1/ssl=0/' /etc/webmin/miniserv.conf
+echo "referers=${webmin_host}" >> /etc/webmin/config
