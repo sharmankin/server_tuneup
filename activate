@@ -18,6 +18,8 @@ cmd_prefix=$(check_root)
 if [[ $cmd_prefix = 'sudo' ]]; then
   alias apt='sudo apt'
   alias dpkg-query='sudo dpkg-query'
+  alias add-apt-repository='sudo add-apt-repository'
+  alias update-alternatives='sudo update-alternatives'
   sudo -b printf '%s' ''
 elif [[ $cmd_prefix = 'restrict' ]]; then
   exit 4
@@ -29,7 +31,7 @@ install() {
   for app in "$@"; do
     [[ -z $(dpkg-query -l | grep -E "\b$app\b" | cut -d " " -f3) ]] && apps_to_install+=("$app")
   done
-  
+  echo "_ $* _"
 
   [[ -n "${apps_to_install[*]}" ]] && apt install "${apps_to_install[@]}" -y --no-install-recommends
 

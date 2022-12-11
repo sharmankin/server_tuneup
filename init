@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 source ./activate
 
-install software-properties-common python3-{dev,pip,venv} htop lnav curl wget links ncdu
+install software-properties-common htop lnav curl wget links ncdu
+
+add-apt-repository ppa:deadsnakes/ppa -y
+
+update
+install python3-{dev,pip,venv}
