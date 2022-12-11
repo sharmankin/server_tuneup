@@ -68,7 +68,7 @@ prompt() {
       END_LINE='#'
       ps_start='\n'
     else
-      colors="$(printf '%b' '[ \e[33mSelect color for prompt\e[m ]' \
+      colors="$(printf '%b\n' '[ \e[33mSelect color for prompt\e[m ]' \
         " 1) \\e[32m$prompt_host_name\\e[m" \
         " 2) \\e[33m$prompt_host_name\\e[m" \
         " 3) \\e[34m$prompt_host_name\\e[m" \
