@@ -59,8 +59,10 @@ EOF
 }
 
 check_file_protection() {
-    grep -Eq '^#\s*?protected\s*$' "${1}" || {
+    config_file="${1}"
+
+   if [[ -f "${config_file}" ]] && grep -Eq '^#\s*?protected\s*$' "${1}"; then
     printf 'Marker "# protected" in file %s.\nRemove marker and repeat\n' "${config_file}"
     return 1
-  }
+  fi
 }
