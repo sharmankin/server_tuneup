@@ -23,6 +23,34 @@ EOF
 fi
 
 update
+
+
+
+
+install perl-doc libauthen-oath-perl \
+libb-hooks-op-check-perl \
+libclass-{method-modifiers,xsaccessor}-perl \
+libcrypt-ssleay-perl \
+libdbd-{pgsql,pg-perl} \
+libdevel-callchecker-perl \
+libdigest-hmac-perl \
+libdynaloader-functions-perl
+
+install libexporter-tiny-perl \
+libimport-into-perl \
+libmodule-runtime-perl \
+libmoo-perl \
+libnet-ssleay-perl \
+libparams-classify-perl \
+libreadonly-perl \
+libref-util-{,xs-}perl
+
+install librole-tiny-perl \
+libsoap-lite-perl \
+libstrictures-perl \
+libsub-{name,quote}-perl \
+libtype-{tiny,-xs-}-perl
+
 install webmin
 
 read -r -p 'Take a name for subdomain ( default is "adm" ): ' subdomain
