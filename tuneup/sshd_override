@@ -10,16 +10,21 @@ PasswordAuthentication no'
 
 printf '%b' "${default_directives}"
 
-while read -r directive; do
-  read -r name value <<<"$directive"
+directive_mod() {
+  local name value reply
+
+  read -r name value <<<"$1"
 
   read -r -p "${name}=" reply
   [[ -n $reply ]] && {
 
-    new_directives+=("${name} ${value}")
+    printf '%s' "${name} ${value}"
 
-  } || new_directives+=("${directive}")
+  } || printf '%s' "$1"
+}
 
+while read -r directive; do
+  new_directives+=( "$(directive_mod "${directive}")" )
 done
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
