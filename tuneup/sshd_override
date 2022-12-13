@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")" && source ../local_env || exit 20
+
+default_directives='Port 12982
+PermitRootLogin no
+ClientAliveInterval 5
+ClientAliveCountMax 30
+PasswordAuthentication no'
+
+printf '%b' "${default_directives}"
+
+while read -r directive; do
+  read -r name value <<<"$directive"
+
+  read -r -p "${name}=" reply
+  [[ -n $reply ]] && {
+
+    new_directives+=("${name} ${value}")
+
+  } || new_directives+=("${directive}")
+
+done
+
+[[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
+
+printf '%b\n' "${new_directives[@]}" | tee ./nd
+
+#tee /etc/ssh/sshd_config.d/override.conf <<EOF
+#
+#EOF
