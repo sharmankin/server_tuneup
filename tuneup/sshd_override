@@ -8,7 +8,7 @@ ClientAliveInterval 5
 ClientAliveCountMax 30
 PasswordAuthentication no'
 
-printf '%b\n' "${default_directives[@]}"
+printf 'Preset directives:\n\n%b\n' "${default_directives[@]}"
 echo
 
 read -r -p 'Want to change directives? [y|N]: ' -n 1 reply
@@ -28,7 +28,10 @@ if [[ "${reply,,}" = 'y' ]]; then
 
   done 3< <(printf '%s\n' "${default_directives}")
 
-  printf '%b\n' "${new_directives[@]}" | tee ../override.conf
+
 else
-  printf '%b\n' "${default_directives[@]}" | tee ../override.conf
+  new_directives=( "${default_directives[@]}" )
 fi
+
+printf '%b\n' "${new_directives[@]}"
+#| tee /etc/ssh/sshd_config.d/override.conf
