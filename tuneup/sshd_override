@@ -8,7 +8,7 @@ ClientAliveInterval 5
 ClientAliveCountMax 30
 PasswordAuthentication no'
 
-while read -r directive; do
+while read -r -u 3 directive; do
 
   read -r name value <<<"$directive"
 
@@ -19,9 +19,8 @@ while read -r directive; do
 
   new_directives+=("${name} ${value}")
 
-done \
-  < <(printf '%s\n' "${default_directives}")
+done 3< <(printf '%s\n' "${default_directives}")
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
-printf '%b\n' "${new_directives}"
+printf '%b\n' "${new_directives[@]}"
