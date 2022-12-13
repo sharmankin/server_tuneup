@@ -8,19 +8,25 @@ ClientAliveInterval 5
 ClientAliveCountMax 30
 PasswordAuthentication no'
 
-while read -r -u 3 directive; do
+printf '%b\n' "${default_directives[@]}"
+echo
 
-  read -r name value <<<"$directive"
+read -r -p 'Want to change directives? [y|N]: ' -n 1 reply
+if [[ "${reply,,}" = 'y' ]]; then
+  while read -r -u 3 directive; do
 
-  printf '%s = ' "${name}"
-  read -r reply
+    read -r name value <<<"$directive"
 
-  [[ -n $reply ]] && value=$reply
+    printf '%s = ' "${name}"
+    read -r reply
 
-  new_directives+=("${name} ${value}")
+    [[ -n $reply ]] && value=$reply
 
-done 3< <(printf '%s\n' "${default_directives}")
+    new_directives+=("${name} ${value}")
 
-[[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
+  done 3< <(printf '%s\n' "${default_directives}")
 
-printf '%b\n' "${new_directives[@]}"
+  printf '%b\n' "${new_directives[@]}" | tee ../override.conf
+else
+  printf '%b\n' "${default_directives[@]}" | tee ../override.conf
+fi
