@@ -23,7 +23,7 @@ directive_mod() {
   } || printf '%s' "$1"
 }
 
-while read -d '' -r directive <<<"${default_directives[@]}"; do
+while read -r directive <<<"${default_directives}"; do
   new_directives+=("$(directive_mod "${directive}")")
 #  read -r name value <<<"$directive"
 #
@@ -38,7 +38,7 @@ done
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
-printf '%b\n' "${new_directives[@]}" | tee ./nd
+#printf '%b\n' "${new_directives[@]}" | tee ./nd
 
 #tee /etc/ssh/sshd_config.d/override.conf <<EOF
 #
