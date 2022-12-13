@@ -28,9 +28,11 @@ if [[ "${reply,,}" = 'y' ]]; then
 
   done 3< <(printf '%s\n' "${default_directives}")
 
-
 else
-  new_directives=( "${default_directives[@]}" )
+
+  new_directives=("${default_directives[@]}")
 fi
 
 printf '%b\n' "${new_directives[@]}" | tee /etc/ssh/sshd_config.d/override.conf
+
+systemctl restart sshd
