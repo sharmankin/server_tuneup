@@ -10,22 +10,10 @@ PasswordAuthentication no'
 
 #printf '%b' "${default_directives}"
 
-#directive_mod() {
-#  local name value reply
-#
-#  read -r name value <<<"$1"
-#
-#  read -r -p "${name}=" reply
-#  [[ -n $reply ]] && {
-#
-#    printf '%s' "${name} ${value}"
-#
-#  } || printf '%s' "$1"
-#}
+directive_mod() {
+  local name value reply
 
-while read -r directive <<<"${default_directives}"; do
-#  new_directives+=("$(directive_mod "${directive}")")
-  read -r name value <<<"$directive"
+  read -r name value <<<"$1"
 
   read -r -p "${name}=" reply
   [[ -n $reply ]] && {
@@ -33,6 +21,18 @@ while read -r directive <<<"${default_directives}"; do
     printf '%s' "${name} ${value}"
 
   } || printf '%s' "$1"
+}
+
+while read -r directive <<<"${default_directives}"; do
+  new_directives+=("$(directive_mod "${directive}")")
+#  read -r name value <<<"$directive"
+#
+#  read -r -p "${name}=" reply
+#  [[ -n $reply ]] && {
+#
+#    printf '%s\n' "${name} ${value}"
+#
+#  } || printf '%s\n' "$1"
 
 done
 
