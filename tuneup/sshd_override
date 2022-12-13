@@ -33,5 +33,4 @@ else
   new_directives=( "${default_directives[@]}" )
 fi
 
-printf '%b\n' "${new_directives[@]}"
-#| tee /etc/ssh/sshd_config.d/override.conf
+printf '%b\n' "${new_directives[@]}" | tee /etc/ssh/sshd_config.d/override.conf
