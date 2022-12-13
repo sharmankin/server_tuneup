@@ -34,7 +34,7 @@ while read -r directive ; do
 #
 #  } || printf '%s\n' "$1"
 
-done < <( "${default_directives[@]}" )
+done < <( printf '%s\n' "${default_directives}" )
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
