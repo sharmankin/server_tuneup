@@ -24,8 +24,8 @@ directive_mod() {
 }
 
 while read -r directive; do
-  new_directives+=( "$(directive_mod "${directive}")" )
-done
+  new_directives+=("$(directive_mod "${directive}")")
+done <<<"${default_directives}"
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
