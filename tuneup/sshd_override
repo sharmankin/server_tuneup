@@ -8,42 +8,20 @@ ClientAliveInterval 5
 ClientAliveCountMax 30
 PasswordAuthentication no'
 
-#printf '%b' "${default_directives}"
-
-directive_mod() {
-  local name value reply
-
-  read -r name value <<<"$1"
-
-  read -r -p "${name}=" reply
-  [[ -n $reply ]] && {
-
-    printf '%s' "${name} ${value}"
-
-  } || printf '%s' "$1"
-}
-
 while read -r directive; do
-  #  new_directives+=("$(directive_mod "${directive}")")
 
   read -r name value <<<"$directive"
-  printf '%s - %s\n' $name $value
 
-  #  read -r name value <<<"$directive"
-  #
-  #  read -r -p "${name}=" reply
-  #  [[ -n $reply ]] && {
-  #
-  #    printf '%s\n' "${name} ${value}"
-  #
-  #  } || printf '%s\n' "$1"
+  printf '%s = ' "${name}"
+  read -r reply
 
-done < <(printf '%s\n' "${default_directives}")
+  [[ -n $reply ]] && value=$reply
+
+  new_directives+=("${name} ${value}")
+
+done \
+  < <(printf '%s\n' "${default_directives}")
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
-#printf '%b\n' "${new_directives[@]}" | tee ./nd
-
-#tee /etc/ssh/sshd_config.d/override.conf <<EOF
-#
-#EOF
+printf '%b\n' "${new_directives}"
