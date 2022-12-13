@@ -27,7 +27,7 @@ while read -r directive; do
   #  new_directives+=("$(directive_mod "${directive}")")
 
   read -r name value <<<"$directive"
-  printf '%s - %s\n' name value
+  printf '%s - %s\n' $name $value
 
   #  read -r name value <<<"$directive"
   #
