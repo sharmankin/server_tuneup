@@ -26,8 +26,9 @@ directive_mod() {
 while read -r directive ; do
 #  new_directives+=("$(directive_mod "${directive}")")
   
-  echo "${directive}"
-  
+  new_directive=$(directive_mod "${directive}")
+  echo "${new_directive}"
+
 #  read -r name value <<<"$directive"
 #
 #  read -r -p "${name}=" reply
