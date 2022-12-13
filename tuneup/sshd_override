@@ -23,21 +23,22 @@ directive_mod() {
   } || printf '%s' "$1"
 }
 
-while read -r directive ; do
-#  new_directives+=("$(directive_mod "${directive}")")
-  
-  directive_mod "${directive}"
+while read -r directive; do
+  #  new_directives+=("$(directive_mod "${directive}")")
 
-#  read -r name value <<<"$directive"
-#
-#  read -r -p "${name}=" reply
-#  [[ -n $reply ]] && {
-#
-#    printf '%s\n' "${name} ${value}"
-#
-#  } || printf '%s\n' "$1"
+  read -r name value <<<"$directive"
+  printf '%s - %s\n' name value
 
-done < <( printf '%s\n' "${default_directives}" )
+  #  read -r name value <<<"$directive"
+  #
+  #  read -r -p "${name}=" reply
+  #  [[ -n $reply ]] && {
+  #
+  #    printf '%s\n' "${name} ${value}"
+  #
+  #  } || printf '%s\n' "$1"
+
+done < <(printf '%s\n' "${default_directives}")
 
 [[ -z "${new_directives[*]}" ]] && new_directives="$default_directives"
 
