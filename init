@@ -6,6 +6,8 @@ release=$(lsb_release -cs)
 
 [[ -z ${country} ]] && country='en'
 
+# ToDo: Сделать проверку доступности локального скопа репозиториев
+
 source_file="/etc/apt/sources.list"
 session_timestamp="$(date +"%Y%m%d-%H%M%S")"
 
@@ -29,7 +31,6 @@ deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-security
 EOF
 }
 update
-install software-properties-common htop lnav curl wget links ncdu python3-{dev,pip,venv} mc snapd
-install resolvconf
+install software-properties-common htop lnav curl wget links ncdu python3-{dev,pip,venv} mc snapd jq resolvconf acl
 
 fix_wait_online
