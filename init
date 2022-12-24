@@ -31,6 +31,7 @@ deb [arch=amd64] http://${country}.archive.ubuntu.com/ubuntu ${release}-security
 EOF
 }
 update
-install software-properties-common htop lnav curl wget links ncdu python3-{dev,pip,venv} mc snapd jq resolvconf acl
+install software-properties-common htop lnav curl wget links ncdu \
+  python3-{dev,pip,venv} mc snapd jq resolvconf acl bash-completion
 
 fix_wait_online
