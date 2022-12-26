@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# bashsupport disable=GrazieInspection
+#sudo -u postgres psql -c "create extension plpython3u;"
+#sudo -u postgres psql -c "create extension jsonb_plpython3u;"
+
+printf '%s\n' "create extension plpython3u;" "create extension jsonb_plpython3u;"
+
+[[ -z "${1}" ]] && {
+  echo "No version specified"
+  exit 12
+}
+
+default_config="listen_addresses = '*'
+port = 5432
+shared_preload_libraries = 'pg_cron'
+cron.database_name = 'api'
+shared_buffers = 8GB
+max_connections = 1000"
+
+printf 'Preset config directives:\n\n%b\n' "${default_config[@]}"
+echo
+
+read -r -p 'Want to change directives? [y|N]: ' -n 1 reply
+echo
+
+if [[ "${reply,,}" = 'y' ]]; then
+  while read -r -u 3 directive; do
+
+    read -r name value <<<"$directive"
+
+    printf '%s = ' "${name}"
+    read -r reply
+
+    [[ -n $reply ]] && value=$reply
+
+    directives+=("${name} ${value}")
+
+  done 3< <(printf '%s\n' "${default_config}")
+
+else
+  directives=("${default_config[@]}")
+fi
+
+[[ -n "${2}" ]] && cluster="${2}" || cluster=main
+
+printf '%b\n' "${directives[@]}" | tee /etc/postgresql/"${1}"/"${cluster}"/conf.d/override.conf

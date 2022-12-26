@@ -23,4 +23,5 @@ EOF
 fi
 
 update
-install postgresql-"${version}" postgresql-client-"${version}" libpq-dev postgresql-"${version}"-{mysql-fdw,cron}
+install postgresql-"${version}" postgresql-client-"${version}" libpq-dev \
+  postgresql-"${version}"-{mysql-fdw,cron} postgresql-plpython3-"${version}"
